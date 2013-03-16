@@ -15,39 +15,17 @@ public:
 
 	//properties
 public:
-	RGBQUAD GetPixel(int x, int y) const
-	{
-		RGBQUAD ret;
-		BYTE* pos = (BYTE*)data + Spectrum() * (y * Width() + x) + y * this->offset;
-		ret=*(RGBQUAD*)(pos);
-		if (Spectrum()==3)
-			ret.rgbReserved=0xff;
-		return ret;
-	}
-	const BYTE * DataPtr(int x, int y) const
-	{
-		return (BYTE*)data + Spectrum() * (y * Width() + x) + y * this->offset ;
-	}
-	UINT32 Width() const
-	{
-		return this->width;
-	}
-	UINT32 Height() const
-	{
-		return this->height;
-	}
-	UINT32 Spectrum() const
-	{
-		return this->spectrum;
-	}
+	RGBQUAD GetPixel(int x, int y) const;
+	const BYTE * DataPtr(int x, int y) const;
+	UINT32 Width() const;
+	UINT32 Height() const;
+	UINT32 Spectrum() const;
 
 	//algorithm
 public:
-	INT32 IndexOf(Bitmap& subBitmap, OUT RECT* subRect);
+	COORD IndexOf(Bitmap& subBitmap);
 	INT32 CutOut(const RECT* rect);
 private:
-	//enum COLOR {ALPHA /*= 3, RED = 2, GREEN = 1, BLUE = 0};
-	//int colormemcmp(const voi*/d* src1, const void* src2, COLOR color, UINT32 size);
 	BOOL IsEqual(COORD coord, Bitmap& subBitmap);
 private:
 	void ReadFromFile(TCHAR* filename);

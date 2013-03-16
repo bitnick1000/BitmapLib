@@ -29,36 +29,22 @@ void BitmapTestCase::testGetPixel()
 	CPPUNIT_ASSERT_EQUAL( color.rgbGreen, (BYTE)75 );
 	CPPUNIT_ASSERT_EQUAL(color.rgbBlue, (BYTE)107 );
 }
-//void testIndexOf1()
-//{
-//    Bitmap bmp1(_T("..\\TestResources\\B.bmp"));
-//    Bitmap bmp2(_T("..\\TestResources\\B.bmp"));
-//    RECT rect;
-//    int result = bmp2.IndexOf(bmp1, &rect);
-//    CPPUNIT_ASSERT( result != -1 );
-//}
 void testIndexOf1()
 {
 	Bitmap sub_24(_T("..\\TestResources\\IndexOf\\sub1_24.bmp"));
 	Bitmap bitmap(_T("..\\TestResources\\Lena.bmp"));
-	RECT rect;
-	int result = bitmap.IndexOf(sub_24, &rect);
-	CPPUNIT_ASSERT( result != -1 );
-	//CPPUNIT_ASSERT( rect.left == 0 );
-	//CPPUNIT_ASSERT( rect.top == 0 );
-	//CPPUNIT_ASSERT( rect.right == 10 );
-	//CPPUNIT_ASSERT( rect.bottom == 10 );
+	COORD result = bitmap.IndexOf(sub_24);
+	CPPUNIT_ASSERT( result.X != -1 );
 	Bitmap sub_32(_T("..\\TestResources\\IndexOf\\sub1_32.bmp"));
-	result = bitmap.IndexOf(sub_32, &rect);
-	CPPUNIT_ASSERT( result != -1 );
+	result= bitmap.IndexOf(sub_32);
+	CPPUNIT_ASSERT( result.X != -1 );
 }
 void testIndexOf2()
 {
 	Bitmap sub_24(_T("..\\TestResources\\IndexOf\\sub2_24.bmp"));
 	Bitmap bitmap(_T("..\\TestResources\\Lena.bmp"));
-	RECT rect;
-	int result = bitmap.IndexOf(sub_24, &rect);
-	CPPUNIT_ASSERT( result != -1 );
+	COORD result = bitmap.IndexOf(sub_24);
+	CPPUNIT_ASSERT( result.X != -1 );
 }
 void testIndexOf3()
 {
@@ -74,9 +60,9 @@ void testIndexOf3()
 			CPPUNIT_ASSERT( sub.GetPixel(0+x,0+y)==bitmap.GetPixel(122+x,251+y) );
 		}
 	}
-	RECT rect;
-	int result = bitmap.IndexOf(sub, &rect);
-	CPPUNIT_ASSERT( result != -1 );
+	COORD result = bitmap.IndexOf(sub);
+	CPPUNIT_ASSERT( result.X == 122 );
+	CPPUNIT_ASSERT( result.Y == 251 );
 }
 void BitmapTestCase::testIndexOf()
 {
