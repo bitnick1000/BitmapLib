@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MFCApplication", "MFCApplication\MFCApplication.vcxproj", "{ACF234E4-2E27-4C2F-A1C7-391C4BFAFC4A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Bitmap", "Bitmap\Bitmap.vcxproj", "{17A07B4B-E6BA-419E-9158-E0DCD03069F9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BitmapTester", "BitmapTester\BitmapTester.vcxproj", "{4A9D66BA-7329-45C1-98FB-5B3B84D400B7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ACF234E4-2E27-4C2F-A1C7-391C4BFAFC4A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{ACF234E4-2E27-4C2F-A1C7-391C4BFAFC4A}.Debug|Win32.Build.0 = Debug|Win32
+		{ACF234E4-2E27-4C2F-A1C7-391C4BFAFC4A}.Release|Win32.ActiveCfg = Release|Win32
+		{ACF234E4-2E27-4C2F-A1C7-391C4BFAFC4A}.Release|Win32.Build.0 = Release|Win32
+		{17A07B4B-E6BA-419E-9158-E0DCD03069F9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{17A07B4B-E6BA-419E-9158-E0DCD03069F9}.Debug|Win32.Build.0 = Debug|Win32
+		{17A07B4B-E6BA-419E-9158-E0DCD03069F9}.Release|Win32.ActiveCfg = Release|Win32
+		{17A07B4B-E6BA-419E-9158-E0DCD03069F9}.Release|Win32.Build.0 = Release|Win32
+		{4A9D66BA-7329-45C1-98FB-5B3B84D400B7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4A9D66BA-7329-45C1-98FB-5B3B84D400B7}.Debug|Win32.Build.0 = Debug|Win32
+		{4A9D66BA-7329-45C1-98FB-5B3B84D400B7}.Release|Win32.ActiveCfg = Release|Win32
+		{4A9D66BA-7329-45C1-98FB-5B3B84D400B7}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
