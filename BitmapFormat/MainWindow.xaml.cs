@@ -40,11 +40,15 @@ namespace BitmapFormat
                 }
             }
             folderBrowser.Dispose();
+            MessageBox.Show("Done!");
             this.Close();
         }
         void BitmapFormat(string path)
         {
             System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(path);
+            bitmap.Palette
+            if (bitmap.PixelFormat == System.Drawing.Imaging.PixelFormat.Format24bppRgb)
+                return;
             System.Drawing.Bitmap newBitmap = new System.Drawing.Bitmap(bitmap.Width, bitmap.Height, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
             for (int y = 0; y < newBitmap.Height; y++)
                 for (int x = 0; x < newBitmap.Width; x++)

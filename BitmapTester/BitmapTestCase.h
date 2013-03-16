@@ -37,5 +37,4 @@ protected:
 	void testEquals();
 };
 
-
 #endif
