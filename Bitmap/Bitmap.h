@@ -1,8 +1,12 @@
 #ifndef _BITMAP_H_
 #define _BITMAP_H_
 
-#include <string>
 #include "stdafx.h"
+#include <string>
+#include <iostream>
+#include <vector>
+using namespace std;
+
 using namespace std;
 class Bitmap
 {
@@ -23,7 +27,9 @@ public:
 
 	//algorithm
 public:
-	COORD IndexOf(Bitmap& subBitmap);
+	enum ORIGIN{TOP_LEFT,BOTTOM_LEFT};
+	COORD IndexOf(Bitmap& subBitmap,ORIGIN origin,vector<COORD>& coords);
+	COORD IndexOf(Bitmap& subBitmap,ORIGIN origin);
 	INT32 CutOut(const RECT* rect);
 private:
 	BOOL IsEqual(COORD coord, Bitmap& subBitmap);

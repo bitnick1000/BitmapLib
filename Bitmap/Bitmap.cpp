@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Bitmap.h"
 #include <fstream>
+#include <vector>
 using namespace std;
 Bitmap::~Bitmap()
 {
@@ -24,9 +25,9 @@ RGBQUAD Bitmap::GetPixel(int x, int y) const
 {
 	RGBQUAD ret;
 	BYTE* pos = (BYTE*)data + Spectrum() * (y * Width() + x) + y * this->offset;
-	ret=*(RGBQUAD*)(pos);
-	if (Spectrum()==3)
-		ret.rgbReserved=0xff;
+	ret = *(RGBQUAD*)(pos);
+	if (Spectrum() == 3)
+		ret.rgbReserved = 0xff;
 	return ret;
 }
 const BYTE * Bitmap::DataPtr(int x, int y) const
@@ -72,20 +73,15 @@ void Bitmap::ReadFromFile(TCHAR* filename)
 void Bitmap::ReadFromWnd(CWnd* pWnd, int x, int y, int width, int height)
 {
 	CDC* pDeskDC =  pWnd->GetDC();
-	CRect rc;
-	pWnd->GetClientRect(rc);
-	//rc.right=10;
 	CDC  memDC;
 	memDC.CreateCompatibleDC(pDeskDC);
 	CBitmap bmp;
 	BITMAP bitmap;
 	bmp.CreateCompatibleBitmap(pDeskDC, width, height);
-	//bmp.CreateCompatibleBitmap(pDeskDC,rc.Width(),rc.Height());
 	memDC.SelectObject(&bmp);
 
 	bmp.GetBitmap(&bitmap);
 	memDC.BitBlt(0, 0, bitmap.bmWidth, bitmap.bmHeight, pDeskDC, x, y, SRCCOPY);
-	//memDC.BitBlt(0,0,m_bitmap.bmWidth,m_bitmap.bmHeight,pDeskDC,0,0,SRCCOPY);
 
 	//Ìí¼ÓÊó±ê
 	/*CPoint point;
@@ -114,7 +110,12 @@ void Bitmap::ReadFromWnd(CWnd* pWnd, int x, int y, int width, int height)
 
 	GetDIBits(memDC.m_hDC, bmp, 0, bitmap.bmHeight, bitmap.bmBits, pBitmapInfo, DIB_RGB_COLORS);
 
+	this->width = bitmap.bmWidth;
+	this->height = bitmap.bmHeight;
+	this->spectrum = bitmap.bmBitsPixel / 8;
+	this->offset = 4 - Spectrum() * Width() & 0x3;
 	data = bitmap.bmBits;
+
 }
 void Bitmap::Save(wstring& filename)
 {
@@ -211,7 +212,43 @@ BOOL Bitmap::IsEqual(COORD coord, Bitmap& subBitmap)
 	}
 	return TRUE;
 }
-COORD Bitmap::IndexOf(Bitmap& subBitmap)
+COORD Bitmap::IndexOf(Bitmap& subBitmap,ORIGIN origin,vector<COORD>& coords)
+{
+	COORD coord = {0};
+	for(vector<COORD>::iterator iter=coords.begin() ; iter!=coords.end() ;iter++ )
+	{
+		if(IsEqual(*iter, subBitmap))
+		{
+			if (origin==BOTTOM_LEFT)
+				return *iter;
+			else if(origin==TOP_LEFT)
+			{
+				coord=*iter;
+				coord.Y=Height()-coord.Y;
+				return coord;
+			}
+		}
+	}
+	for( ; coord.Y < Height() - subBitmap.Height() + 1; coord.Y++)
+	{
+		for(coord.X = 0 ; coord.X < Width() - subBitmap.Width() + 1; coord.X++)
+		{
+			if(IsEqual(coord, subBitmap))
+			{
+				if (origin==BOTTOM_LEFT)
+					return coord;
+				else if(origin==TOP_LEFT)
+				{
+					coord.Y=Height()-coord.Y;
+					return coord;
+				}
+			}
+		}
+	}
+	COORD coordNotFound = { -1, -1};
+	return coordNotFound;
+}
+COORD Bitmap::IndexOf(Bitmap& subBitmap,ORIGIN origin)
 {
 	COORD coord = {0};
 	for( ; coord.Y < Height() - subBitmap.Height() + 1; coord.Y++)
@@ -219,10 +256,18 @@ COORD Bitmap::IndexOf(Bitmap& subBitmap)
 		for(coord.X = 0 ; coord.X < Width() - subBitmap.Width() + 1; coord.X++)
 		{
 			if(IsEqual(coord, subBitmap))
-				return coord;
+			{
+				if (origin==BOTTOM_LEFT)
+					return coord;
+				else if(origin==TOP_LEFT)
+				{
+					coord.Y=Height()-coord.Y;
+					return coord;
+				}
+			}
 		}
 	}
-	COORD coordNotFound = {-1,-1};
+	COORD coordNotFound = { -1, -1};
 	return coordNotFound;
 }
 INT32 Bitmap::CutOut(const RECT* rect)
@@ -249,11 +294,13 @@ BOOL operator == (const RGBQUAD& left, const RGBQUAD& right)
 }
 BOOL operator != (const RGBQUAD& left, const RGBQUAD& right)
 {
-	return *(int*)&left != *(int*)&right;
+	return !( left == right ) ;
 }
 BOOL operator == (const RGBTRIPLE triple, const RGBQUAD quad)
 {
-	return *(short*)&triple == *(short*)&quad && triple.rgbtRed == quad.rgbRed && quad.rgbReserved == 0xff;
+	RGBQUAD tri =   *(RGBQUAD*) &triple;
+	tri.rgbReserved=0Xff;
+	return tri==quad;
 }
 BOOL operator != (const RGBTRIPLE triple, const RGBQUAD quad)
 {
