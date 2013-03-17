@@ -20,19 +20,20 @@ public:
 	//properties
 public:
 	RGBQUAD GetPixel(int x, int y) const;
+	INT32 Width() const;
+	INT32 Height() const;
+	INT32 Spectrum() const;	
+private:
 	const BYTE * DataPtr(int x, int y) const;
-	UINT32 Width() const;
-	UINT32 Height() const;
-	UINT32 Spectrum() const;
 
 	//algorithm
 public:
-	enum ORIGIN{TOP_LEFT,BOTTOM_LEFT};
-	COORD IndexOf(Bitmap& subBitmap,ORIGIN origin,vector<COORD>& coords);
-	COORD IndexOf(Bitmap& subBitmap,ORIGIN origin);
+	COORD IndexOf(Bitmap& subBitmap,vector<COORD>& coords);
+	COORD IndexOf(Bitmap& subBitmap);
 	INT32 CutOut(const RECT* rect);
 private:
 	BOOL IsEqual(COORD coord, Bitmap& subBitmap);
+	void CoordConvert(COORD* coord);
 private:
 	void ReadFromFile(TCHAR* filename);
 	void ReadFromWnd(CWnd* pWnd, int x, int y, int width, int height);

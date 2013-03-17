@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Bitmap.h"
 #include <fstream>
+#include <vector>
 using namespace std;
 Bitmap::~Bitmap()
 {
@@ -211,7 +212,45 @@ BOOL Bitmap::IsEqual(COORD coord, Bitmap& subBitmap)
 	}
 	return TRUE;
 }
-COORD Bitmap::IndexOf(Bitmap& subBitmap)
+COORD Bitmap::IndexOf(Bitmap& subBitmap, ORIGIN origin, vector<COORD>& coords)
+{
+	COORD coord = {0};
+	for(vector<COORD>::iterator iter = coords.begin() ; iter != coords.end() ; iter++ )
+	{
+		coord = *iter;
+		if(origin == TOP_LEFT)
+			coord.Y = Height() - 1 - coord.Y;
+		if(IsEqual(coord, subBitmap))
+		{
+			if (origin == BOTTOM_LEFT)
+				return *iter;
+			else if(origin == TOP_LEFT)
+			{
+				coord.Y = Height() - 1 - coord.Y;
+				return coord;
+			}
+		}
+	}
+	for( ; coord.Y < Height() - subBitmap.Height() + 1; coord.Y++)
+	{
+		for(coord.X = 0 ; coord.X < Width() - subBitmap.Width() + 1; coord.X++)
+		{
+			if(IsEqual(coord, subBitmap))
+			{
+				if (origin == BOTTOM_LEFT)
+					return coord;
+				else if(origin == TOP_LEFT)
+				{
+					coord.Y = Height() - 1 - coord.Y;
+					return coord;
+				}
+			}
+		}
+	}
+	COORD coordNotFound = { -1, -1};
+	return coordNotFound;
+}
+COORD Bitmap::IndexOf(Bitmap& subBitmap, ORIGIN origin)
 {
 	COORD coord = {0};
 	for( ; coord.Y < Height() - subBitmap.Height() + 1; coord.Y++)
@@ -219,11 +258,24 @@ COORD Bitmap::IndexOf(Bitmap& subBitmap)
 		for(coord.X = 0 ; coord.X < Width() - subBitmap.Width() + 1; coord.X++)
 		{
 			if(IsEqual(coord, subBitmap))
-				return coord;
+			{
+				if (origin == BOTTOM_LEFT)
+					return coord;
+				else if(origin == TOP_LEFT)
+				{
+					coord.Y = Height() - 1 - coord.Y;
+					return coord;
+				}
+			}
 		}
 	}
 	COORD coordNotFound = { -1, -1};
 	return coordNotFound;
+}
+void Bitmap::CoordConvert(COORD coord)
+{
+	coord.Y=this->height -1 - coord.Y;
+	return coord;
 }
 INT32 Bitmap::CutOut(const RECT* rect)
 {
@@ -249,11 +301,13 @@ BOOL operator == (const RGBQUAD& left, const RGBQUAD& right)
 }
 BOOL operator != (const RGBQUAD& left, const RGBQUAD& right)
 {
-	return  ! (  left==right ) ;
+	return !( left == right ) ;
 }
 BOOL operator == (const RGBTRIPLE triple, const RGBQUAD quad)
 {
-	return *(short*)&triple == *(short*)&quad && triple.rgbtRed == quad.rgbRed && quad.rgbReserved == 0xff;
+	RGBQUAD tri =   *(RGBQUAD*) &triple;
+	tri.rgbReserved = 0Xff;
+	return tri == quad;
 }
 BOOL operator != (const RGBTRIPLE triple, const RGBQUAD quad)
 {

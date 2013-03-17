@@ -24,6 +24,7 @@ Bitmap::Bitmap(CWnd* pWnd, int x, int y, int width, int height)
 RGBQUAD Bitmap::GetPixel(int x, int y) const
 {
 	RGBQUAD ret;
+	y = this ->height -1 -y;
 	BYTE* pos = (BYTE*)data + Spectrum() * (y * Width() + x) + y * this->offset;
 	ret = *(RGBQUAD*)(pos);
 	if (Spectrum() == 3)
@@ -34,15 +35,15 @@ const BYTE * Bitmap::DataPtr(int x, int y) const
 {
 	return (BYTE*)data + Spectrum() * (y * Width() + x) + y * this->offset ;
 }
-UINT32 Bitmap::Width() const
+INT32 Bitmap::Width() const
 {
 	return this->width;
 }
-UINT32 Bitmap::Height() const
+INT32 Bitmap::Height() const
 {
 	return this->height;
 }
-UINT32 Bitmap::Spectrum() const
+INT32 Bitmap::Spectrum() const
 {
 	return this->spectrum;
 }
@@ -212,63 +213,42 @@ BOOL Bitmap::IsEqual(COORD coord, Bitmap& subBitmap)
 	}
 	return TRUE;
 }
-COORD Bitmap::IndexOf(Bitmap& subBitmap,ORIGIN origin,vector<COORD>& coords)
+COORD Bitmap::IndexOf(Bitmap& subBitmap, vector<COORD>& coords)
 {
 	COORD coord = {0};
-	for(vector<COORD>::iterator iter=coords.begin() ; iter!=coords.end() ;iter++ )
+	for(vector<COORD>::iterator iter = coords.begin() ; iter != coords.end() ; iter++ )
 	{
-		if(IsEqual(*iter, subBitmap))
+		coord = *iter;
+		//origin top left to origin bottom left
+		CoordConvert(&coord);
+		if(IsEqual(coord, subBitmap))
 		{
-			if (origin==BOTTOM_LEFT)
-				return *iter;
-			else if(origin==TOP_LEFT)
-			{
-				coord=*iter;
-				coord.Y=Height()-coord.Y;
-				return coord;
-			}
+			return *iter;
 		}
 	}
+	return IndexOf(subBitmap);
+}
+COORD Bitmap::IndexOf(Bitmap& subBitmap)
+{
+	COORD coord = {0};
 	for( ; coord.Y < Height() - subBitmap.Height() + 1; coord.Y++)
 	{
 		for(coord.X = 0 ; coord.X < Width() - subBitmap.Width() + 1; coord.X++)
 		{
 			if(IsEqual(coord, subBitmap))
 			{
-				if (origin==BOTTOM_LEFT)
-					return coord;
-				else if(origin==TOP_LEFT)
-				{
-					coord.Y=Height()-coord.Y;
-					return coord;
-				}
+				//origin top left to origin bottom left
+				CoordConvert(&coord);
+				return coord;
 			}
 		}
 	}
 	COORD coordNotFound = { -1, -1};
 	return coordNotFound;
 }
-COORD Bitmap::IndexOf(Bitmap& subBitmap,ORIGIN origin)
+void Bitmap::CoordConvert(COORD* coord)
 {
-	COORD coord = {0};
-	for( ; coord.Y < Height() - subBitmap.Height() + 1; coord.Y++)
-	{
-		for(coord.X = 0 ; coord.X < Width() - subBitmap.Width() + 1; coord.X++)
-		{
-			if(IsEqual(coord, subBitmap))
-			{
-				if (origin==BOTTOM_LEFT)
-					return coord;
-				else if(origin==TOP_LEFT)
-				{
-					coord.Y=Height()-coord.Y;
-					return coord;
-				}
-			}
-		}
-	}
-	COORD coordNotFound = { -1, -1};
-	return coordNotFound;
+	coord->Y = this->height - 1 - coord->Y;
 }
 INT32 Bitmap::CutOut(const RECT* rect)
 {
@@ -299,8 +279,8 @@ BOOL operator != (const RGBQUAD& left, const RGBQUAD& right)
 BOOL operator == (const RGBTRIPLE triple, const RGBQUAD quad)
 {
 	RGBQUAD tri =   *(RGBQUAD*) &triple;
-	tri.rgbReserved=0Xff;
-	return tri==quad;
+	tri.rgbReserved = 0Xff;
+	return tri == quad;
 }
 BOOL operator != (const RGBTRIPLE triple, const RGBQUAD quad)
 {
