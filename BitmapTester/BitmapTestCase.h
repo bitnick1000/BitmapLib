@@ -16,6 +16,7 @@ class BitmapTestCase : public CPPUNIT_NS::TestFixture
 	CPPUNIT_TEST_SUITE( BitmapTestCase );
 	CPPUNIT_TEST( testGetPixel );
 	CPPUNIT_TEST( testIndexOf );
+	CPPUNIT_TEST( testIndexOfEx );
 
 	CPPUNIT_TEST( testAdd );
 	CPPUNIT_TEST( testEquals );
@@ -32,6 +33,7 @@ public:
 protected:
 	void testGetPixel();
 	void testIndexOf();
+	void testIndexOfEx();
 	
 	void testAdd();
 	void testEquals();
