@@ -82,6 +82,18 @@ void BitmapTestCase::testIndexOfEx()
 	CPPUNIT_ASSERT( result.X == 130 );
 	CPPUNIT_ASSERT( result.Y == 243 );
 }
+
+void BitmapTestCase::testGAIndexOfEx()
+{
+	Bitmap sub(_T("..\\TestResources\\IndexOfEx\\sub1.png"));
+	Bitmap bitmap(_T("..\\TestResources\\Lena.bmp"));
+	GrayAlphaBitmap gaBitmap(bitmap);
+	GrayAlphaBitmap gaSub(sub);
+	COORD result = gaBitmap.IndexOfEx(gaSub,5,5);
+	CPPUNIT_ASSERT( result.X == 130 );
+	CPPUNIT_ASSERT( result.Y == 243 );
+}
+
 void BitmapTestCase::testAdd()
 {
 	double result = m_value1 + m_value2;

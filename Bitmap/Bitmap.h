@@ -2,12 +2,12 @@
 #define _BITMAP_H_
 
 #include "stdafx.h"
+
 #include <string>
 #include <iostream>
 #include <vector>
 using namespace std;
 
-using namespace std;
 class Bitmap
 {
 public:
@@ -16,6 +16,8 @@ public:
 	Bitmap(CWnd* pWnd, int x, int y, int width, int height);
 public:
 	void Save(wstring& filename);
+
+	friend class GrayAlphaBitmap;
 
 	//properties
 public:

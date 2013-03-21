@@ -4,6 +4,7 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <Bitmap.h>
+#include <GrayAlphaBitmap.h>
 
 /* 
 * A test case that is designed to produce
@@ -17,6 +18,8 @@ class BitmapTestCase : public CPPUNIT_NS::TestFixture
 	CPPUNIT_TEST( testGetPixel );
 	CPPUNIT_TEST( testIndexOf );
 	CPPUNIT_TEST( testIndexOfEx );
+
+	CPPUNIT_TEST( testGAIndexOfEx );
 
 	CPPUNIT_TEST( testAdd );
 	CPPUNIT_TEST( testEquals );
@@ -34,6 +37,8 @@ protected:
 	void testGetPixel();
 	void testIndexOf();
 	void testIndexOfEx();
+
+	void testGAIndexOfEx();
 	
 	void testAdd();
 	void testEquals();
