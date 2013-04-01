@@ -91,7 +91,7 @@ void BitmapTestCase::testGAIndexOfEx()
 	GrayAlphaBitmap gaSub(sub);
 	COORD result = gaBitmap.IndexOfEx(gaSub,5,5);
 	CPPUNIT_ASSERT( result.X == 130 );
-	CPPUNIT_ASSERT( result.Y == 243 );
+	CPPUNIT_ASSERT( result.Y == 246 );
 }
 
 void BitmapTestCase::testAdd()

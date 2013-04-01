@@ -27,12 +27,18 @@
     <ClInclude Include="GrayAlphaBitmap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="HSBImage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bitmap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GrayAlphaBitmap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HSBImage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
