@@ -1,0 +1,84 @@
+#ifndef _HSB_IMAGE_H_
+#define _HSB_IMAGE_H_
+
+#include "stdafx.h"
+#include "Bitmap.h"
+#include <string>
+#include <iostream>
+#include <vector>
+using namespace std;
+
+template <typename T>
+struct HSBColor
+{
+	typedef T value_type;
+	value_type H;
+	value_type S;
+	value_type B;
+};
+
+template <typename T>
+class HSBImage
+{
+	typedef T value_type;
+	typedef T* iterator;
+	typedef const T* const_iterator;
+public:
+	~HSBImage(){{
+		if(data)
+		{
+			free(data);
+			data = NULL;
+		}
+	}}
+	HSBImage();
+	HSBImage(Bitmap& bitmap){
+		this->width = bitmap.Width();
+		this->height = bitmap.Height();
+		data = malloc(this->width * this->height * sizeof(T) * 3);
+		HSBColor<T>* p = (HSBColor<T>*)data;
+		for(UINT32 y = 0; y < height; y++)
+		{
+			for(UINT32 x = 0; x < width; x++)
+			{
+				RGBQUAD rgb = bitmap.GetPixel(x, y);
+				RGB2HSB<T>(rgb.rgbRed, rgb.rgbGreen, rgb.rgbBlue,	p);
+				p++;
+			}
+		}
+	}
+	void LoadFromBitmap(Bitmap& bitmap){{
+		this->width = bitmap.Width();
+		this->height = bitmap.Height();
+		data = malloc(this->width * this->height * sizeof(T) * 3);
+		HSBColor<T>* p = (HSBColor<T>*)data;
+		for(UINT32 y = 0; y < height; y++)
+		{
+			for(UINT32 x = 0; x < width; x++)
+			{
+				RGBQUAD rgb = bitmap.GetPixel(x, y);
+				RGB2HSB<T>(rgb.rgbRed, rgb.rgbGreen, rgb.rgbBlue,	p);
+				p++;
+			}
+		}
+	}
+	}
+public :
+	HSBColor<T> GetPixel(UINT32 x, UINT32 y) const
+	{
+		BYTE* p = (BYTE*)data + (y * height + x) * sizeof(T) * 3;
+		return *(HSBColor<T>*)p;
+	}
+	UINT32 Width() const{
+		return this->width;
+	}
+	UINT32 Height() const{
+		return this->height;
+	}
+private:
+	UINT32 width;
+	UINT32 height;
+	void* data;
+};
+
+#endif
