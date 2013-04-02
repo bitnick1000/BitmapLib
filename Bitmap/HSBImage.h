@@ -60,14 +60,10 @@ public:
 		}
 	}
 public :
-	HSBColorF GetPixel(UINT32 x, UINT32 y) const
+	HSBColor<T> GetPixel(UINT32 x, UINT32 y) const
 	{
 		BYTE* p = (BYTE*)data + (y * height + x) * sizeof(T) * 3;
-		HSBColor<T>* pHSB=	(HSBColor<T>*)p;
-		/*HSBColorF ret;
-		ret.H=pHSB->H/(float)255*360;
-		ret.S=pHSB->S/(float)255*100;
-		ret.B=pHSB->B/(float)255*100;*/
+		HSBColor<T>* pHSB =	(HSBColor<T>*)p;
 		return *pHSB;
 	}
 	UINT32 Width() const
@@ -78,13 +74,33 @@ public :
 	{
 		return this->height;
 	}
+	T GetAverageHue(int x, int y, int width, int height) const
+	{
+		HSBColor<T>* p =	(HSBColor<T>*)DataPtr(x, y);
+		int left=this->width-width;
+		double sum=0.0;
+		for(int loopY=0; loopY <  height; loopY++)
+		{
+			for(int loopX=0; loopX <  width; loopX++)
+			{
+				sum+=p->H;
+				p++;
+			}
+			p+=left;
+		}
+		return sum/(width*height);
+	}
 private:
+	const BYTE * DataPtr(int x, int y) const
+	{
+		return (BYTE*)data + 3 * sizeof(T) * (y * Width() + x)  ;
+	}
 	inline void RGB2HSB(BYTE r, BYTE g, BYTE b, HSBColor<T>* pHSB)
 	{
 		int max = max(max(r, g), b);
 		int min = min(min(r, g), b);
 
-		pHSB->B = max/255.0f;
+		pHSB->B = max / 255.0f;
 		pHSB->S = max == 0 ? 0 :  (max - min) / (float) max;
 
 		float h;

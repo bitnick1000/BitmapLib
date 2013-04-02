@@ -17,6 +17,7 @@ class HSBImageTestCase : public CPPUNIT_NS::TestFixture
 {
 	CPPUNIT_TEST_SUITE( HSBImageTestCase );
 	CPPUNIT_TEST( testGetPixel );
+	CPPUNIT_TEST( testGetAverageHue );
 
 	CPPUNIT_TEST_SUITE_END();
 
@@ -29,6 +30,7 @@ public:
 
 protected:
 	void testGetPixel();
+	void testGetAverageHue();
 };
 
 #endif

@@ -8,12 +8,7 @@
 #include <vector>
 using namespace std;
 
-struct HSBColor
-{
-	uint16_t H;//0-359
-	uint8_t S;//0-100
-	uint8_t B;//0-100
-}
+
 template <typename T>
 struct HSBColor
 {
@@ -22,6 +17,8 @@ struct HSBColor
 	value_type S;
 	value_type B;
 };
+typedef HSBColor<float> HSBColorF;
+
 template <typename T>
 class HSBImage
 {
@@ -66,7 +63,8 @@ public :
 	HSBColor<T> GetPixel(UINT32 x, UINT32 y) const
 	{
 		BYTE* p = (BYTE*)data + (y * height + x) * sizeof(T) * 3;
-		return *(HSBColor<T>*)p;
+		HSBColor<T>* pHSB=	(HSBColor<T>*)p;
+		return *pHSB;
 	}
 	UINT32 Width() const
 	{
@@ -76,26 +74,42 @@ public :
 	{
 		return this->height;
 	}
+	float GetAverageHue(int x,int y,int width,int height) const
+	{
+		HSBColor<T>* p=	DataPtr(x,y);
+		double 
+		for(;y<this->height+height;y++)
+		{
+			for(;x<this->width+width;x++)
+			{
+
+			}
+		}
+	}
 private:
-	inline void RGB2HSB(T r, T g, T b, HSBColor<T>* pHSB)
+	const BYTE * GrayAlphaBitmap::DataPtr(int x, int y) const
+	{
+		return (BYTE*)data + 3 *sizeof(T)* (y * Width() + x)  ;
+	}
+	inline void RGB2HSB(BYTE r, BYTE g, BYTE b, HSBColor<T>* pHSB)
 	{
 		int max = max(max(r, g), b);
 		int min = min(min(r, g), b);
 
-		pHSB->B = max;
-		pHSB->S = max == 0 ? 0 : 255*(max - min) / (float) max;
+		pHSB->B = max/255.0f;
+		pHSB->S = max == 0 ? 0 :  (max - min) / (float) max;
 
-		double h;
+		float h;
 
 		if (max == r && g >= b)
 			h =  (g - b) * 60.0 / (max - min) + 0;
 		else if (max == r && g < b)
 			h =  (g - b) * 60.0 / (max - min) + 360;
 		else if (max == g)
-			h =   (b - r) * 60.0/ (max - min) + 120;
+			h =   (b - r) * 60.0 / (max - min) + 120;
 		else if (max == b)
-			h =  (r - g) * 60.0 / (max - min) + 240; 
-		pHSB->H = h*255/360;
+			h =  (r - g) * 60.0 / (max - min) + 240;
+		pHSB->H = h;
 	}
 private:
 	UINT32 width;
