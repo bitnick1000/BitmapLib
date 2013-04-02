@@ -11,11 +11,11 @@ void HSBImageTestCase::setUp()
 void HSBImageTestCase::testGetPixel()
 {
 	Bitmap bmp(_T("..\\TestResources\\Lena.bmp"));
-	HSBImage<BYTE> image;
+	HSBImage<float> image;
 	image.LoadFromBitmap(bmp);
-	HSBColor<BYTE> color;
+	HSBColorF color;
 	color=image.GetPixel(0,0);
-	CPPUNIT_ASSERT_EQUAL( color.H, (BYTE)81 );
-	CPPUNIT_ASSERT_EQUAL( color.S, (BYTE)19 );
-	CPPUNIT_ASSERT_EQUAL(color.B, (BYTE)56 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( color.H, 6, 0.5 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( color.S, 0.43, 0.5 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( color.B, 0.88, 0.5 );
 }

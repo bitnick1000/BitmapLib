@@ -8,6 +8,12 @@
 #include <vector>
 using namespace std;
 
+struct HSBColor
+{
+	uint16_t H;//0-359
+	uint8_t S;//0-100
+	uint8_t B;//0-100
+}
 template <typename T>
 struct HSBColor
 {
@@ -16,7 +22,6 @@ struct HSBColor
 	value_type S;
 	value_type B;
 };
-
 template <typename T>
 class HSBImage
 {
@@ -24,44 +29,38 @@ class HSBImage
 	typedef T* iterator;
 	typedef const T* const_iterator;
 public:
-	~HSBImage(){{
-		if(data)
+	~HSBImage()
+	{
 		{
-			free(data);
-			data = NULL;
-		}
-	}}
-	HSBImage();
-	HSBImage(Bitmap& bitmap){
-		this->width = bitmap.Width();
-		this->height = bitmap.Height();
-		data = malloc(this->width * this->height * sizeof(T) * 3);
-		HSBColor<T>* p = (HSBColor<T>*)data;
-		for(UINT32 y = 0; y < height; y++)
-		{
-			for(UINT32 x = 0; x < width; x++)
+			if(data)
 			{
-				RGBQUAD rgb = bitmap.GetPixel(x, y);
-				RGB2HSB<T>(rgb.rgbRed, rgb.rgbGreen, rgb.rgbBlue,	p);
-				p++;
+				free(data);
+				data = NULL;
 			}
 		}
 	}
-	void LoadFromBitmap(Bitmap& bitmap){{
-		this->width = bitmap.Width();
-		this->height = bitmap.Height();
-		data = malloc(this->width * this->height * sizeof(T) * 3);
-		HSBColor<T>* p = (HSBColor<T>*)data;
-		for(UINT32 y = 0; y < height; y++)
+	HSBImage() {}
+	HSBImage(Bitmap& bitmap)
+	{
+		LoadFromBitmap(bitmap);
+	}
+	void LoadFromBitmap(Bitmap& bitmap)
+	{
 		{
-			for(UINT32 x = 0; x < width; x++)
+			this->width = bitmap.Width();
+			this->height = bitmap.Height();
+			data = malloc(this->width * this->height * sizeof(T) * 3);
+			HSBColor<T>* p = (HSBColor<T>*)data;
+			for(UINT32 y = 0; y < height; y++)
 			{
-				RGBQUAD rgb = bitmap.GetPixel(x, y);
-				RGB2HSB<T>(rgb.rgbRed, rgb.rgbGreen, rgb.rgbBlue,	p);
-				p++;
+				for(UINT32 x = 0; x < width; x++)
+				{
+					RGBQUAD rgb = bitmap.GetPixel(x, y);
+					RGB2HSB(rgb.rgbRed, rgb.rgbGreen, rgb.rgbBlue,	p);
+					p++;
+				}
 			}
 		}
-	}
 	}
 public :
 	HSBColor<T> GetPixel(UINT32 x, UINT32 y) const
@@ -69,11 +68,34 @@ public :
 		BYTE* p = (BYTE*)data + (y * height + x) * sizeof(T) * 3;
 		return *(HSBColor<T>*)p;
 	}
-	UINT32 Width() const{
+	UINT32 Width() const
+	{
 		return this->width;
 	}
-	UINT32 Height() const{
+	UINT32 Height() const
+	{
 		return this->height;
+	}
+private:
+	inline void RGB2HSB(T r, T g, T b, HSBColor<T>* pHSB)
+	{
+		int max = max(max(r, g), b);
+		int min = min(min(r, g), b);
+
+		pHSB->B = max;
+		pHSB->S = max == 0 ? 0 : 255*(max - min) / (float) max;
+
+		double h;
+
+		if (max == r && g >= b)
+			h =  (g - b) * 60.0 / (max - min) + 0;
+		else if (max == r && g < b)
+			h =  (g - b) * 60.0 / (max - min) + 360;
+		else if (max == g)
+			h =   (b - r) * 60.0/ (max - min) + 120;
+		else if (max == b)
+			h =  (r - g) * 60.0 / (max - min) + 240; 
+		pHSB->H = h*255/360;
 	}
 private:
 	UINT32 width;

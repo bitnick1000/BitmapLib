@@ -6,10 +6,8 @@
 #include <string>
 #include <iostream>
 #include <vector>
-#include "ColorModel.h"
-//#include "Header.h"
-//#include "ColorModelConvert.cpp"
 using namespace std;
+
 
 template <typename T>
 struct HSBColor
@@ -19,6 +17,8 @@ struct HSBColor
 	value_type S;
 	value_type B;
 };
+typedef HSBColor<float> HSBColorF;
+
 template <typename T>
 class HSBImage
 {
@@ -36,7 +36,7 @@ public:
 			}
 		}
 	}
-	HSBImage(){}
+	HSBImage() {}
 	HSBImage(Bitmap& bitmap)
 	{
 		LoadFromBitmap(bitmap);
@@ -53,17 +53,22 @@ public:
 				for(UINT32 x = 0; x < width; x++)
 				{
 					RGBQUAD rgb = bitmap.GetPixel(x, y);
-					RGB2HSB<BYTE>(rgb.rgbRed, rgb.rgbGreen, rgb.rgbBlue,	(T*)p);
+					RGB2HSB(rgb.rgbRed, rgb.rgbGreen, rgb.rgbBlue,	p);
 					p++;
 				}
 			}
 		}
 	}
 public :
-	HSBColor<T> GetPixel(UINT32 x, UINT32 y) const
+	HSBColorF GetPixel(UINT32 x, UINT32 y) const
 	{
 		BYTE* p = (BYTE*)data + (y * height + x) * sizeof(T) * 3;
-		return *(HSBColor<T>*)p;
+		HSBColor<T>* pHSB=	(HSBColor<T>*)p;
+		/*HSBColorF ret;
+		ret.H=pHSB->H/(float)255*360;
+		ret.S=pHSB->S/(float)255*100;
+		ret.B=pHSB->B/(float)255*100;*/
+		return *pHSB;
 	}
 	UINT32 Width() const
 	{
@@ -74,23 +79,25 @@ public :
 		return this->height;
 	}
 private:
-	inline void RGB2HSB(T r, T g, T b,HSBColor<T>* pHSB)
+	inline void RGB2HSB(BYTE r, BYTE g, BYTE b, HSBColor<T>* pHSB)
 	{
 		int max = max(max(r, g), b);
 		int min = min(min(r, g), b);
 
-		pHSB->B = max / 255.0f;
-		pHSB->S = max == 0 ? 0 : (max - min) / (float) max;
+		pHSB->B = max/255.0f;
+		pHSB->S = max == 0 ? 0 :  (max - min) / (float) max;
 
-		pHSB->H = 0;
-		/*if (max == r && g >= b)
-		pHSB->H =(T)( (g - b) * 60f / (max - min) + 0);
+		float h;
+
+		if (max == r && g >= b)
+			h =  (g - b) * 60.0 / (max - min) + 0;
 		else if (max == r && g < b)
-		pHSB->H = (T)( (g - b) * 60f / (max - min) + 360);
+			h =  (g - b) * 60.0 / (max - min) + 360;
 		else if (max == g)
-		pHSB->H =(T)(  (b - r) * 60f / (max - min) + 120);
+			h =   (b - r) * 60.0 / (max - min) + 120;
 		else if (max == b)
-		pHSB->H = (T)( (r - g) * 60f / (max - min) + 240);*/
+			h =  (r - g) * 60.0 / (max - min) + 240;
+		pHSB->H = h;
 	}
 private:
 	UINT32 width;
